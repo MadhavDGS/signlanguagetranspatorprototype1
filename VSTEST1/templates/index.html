@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Translator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f5f5;
+        }
+        
+        [data-bs-theme="dark"] {
+            --primary-color: #64b5f6;
+            --secondary-color: #2d2d2d;
+        }
+        
+        body {
+            transition: background-color 0.3s ease;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        video, img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+        
+        .controls {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 20px;
+            background: var(--secondary-color);
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .status-active {
+            background-color: #28a745;
+            box-shadow: 0 0 8px #28a745;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .status-inactive {
+            background-color: #dc3545;
+        }
+        
+        .feedback-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--secondary-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .language-option {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .language-option.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+        
+        .btn-danger:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-2px);
+        }
+        
+        .input-group .btn {
+            margin-left: 5px;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+            color: #000;
+        }
+        
+        .btn-warning:hover {
+            background: #ffb300;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="btn theme-toggle" onclick="toggleTheme()">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </button>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">
+            <i class="bi bi-translate"></i>
+            Sign Language Translator
+        </h1>
+        
+        <div class="controls">
+            <div class="language-selector mb-4">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <h5 class="text-center mb-2">International</h5>
+                        <div class="d-flex gap-2">
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('isl')" id="isl-option">
+                                <i class="bi bi-globe2"></i>
+                                Indian Sign Language
+                            </div>
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('asl')" id="asl-option">
+                                <i class="bi bi-globe-americas"></i>
+                                American Sign Language
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <h5 class="text-center mb-2">Regional</h5>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('hindi')" id="hindi-option">
+                                <i class="bi bi-translate"></i>
+                                हिंदी
+                            </div>
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('telugu')" id="telugu-option">
+                                <i class="bi bi-translate"></i>
+                                తెలుగు
+                            </div>
+                            <div class="language-option flex-grow-1" onclick="selectLanguage('gujarati')" id="gujarati-option">
+                                <i class="bi bi-translate"></i>
+                                ગુજરાતી
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Playback Speed</label>
+                <div class="btn-group" role="group" aria-label="Playback speed control">
+                    <button type="button" class="btn btn-outline-primary" onclick="setPlaybackSpeed(1)">1x</button>
+                    <button type="button" class="btn btn-outline-primary active" onclick="setPlaybackSpeed(2)">2x</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="setPlaybackSpeed(3)">3x</button>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="textInput" 
+                           placeholder="Type text to translate">
+                    <button class="btn btn-primary" onclick="translateText()">
+                        <i class="bi bi-translate"></i> Translate
+                    </button>
+                    <button class="btn btn-warning" onclick="resetSigns()">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </button>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center">
+                    <div id="statusIndicator" class="status-indicator status-inactive"></div>
+                    <span id="statusText">Select Language</span>
+                </div>
+                <button class="btn btn-success" id="toggleAudio">
+                    <i class="bi bi-mic-fill"></i> Start Live Translation
+                </button>
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <video id="signVideo" controls style="display: none;"></video>
+            <img id="signImage" style="display: none;">
+        </div>
+
+        <div class="feedback-container">
+            <h3><i class="bi bi-chat-square-text"></i> Feedback</h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="correctionInput" class="form-label">Suggest a correction:</label>
+                        <textarea class="form-control" id="correctionInput" rows="3" 
+                                placeholder="Enter your suggested translation"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitFeedback()">
+                        <i class="bi bi-send"></i> Submit Feedback
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let isStreaming = false;
+        let eventSource = null;
+        let currentVideoPromise = null;
+        let pendingText = '';
+        let selectedLanguage = 'asl'; // Default language
+        let currentPlaybackSpeed = 2.0; // Default to 2x speed
+        let isReset = false;
+        
+        // Add theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const currentTheme = html.getAttribute('data-bs-theme');
+            
+            if (currentTheme === 'light') {
+                html.setAttribute('data-bs-theme', 'dark');
+                themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+            } else {
+                html.setAttribute('data-bs-theme', 'light');
+                themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
+            }
+        }
+
+        // Update language selection UI
+        function selectLanguage(language) {
+            selectedLanguage = language;
+            
+            // Update UI
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.getElementById(`${language}-option`).classList.add('active');
+            
+            // Update status text
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = `${language.toUpperCase()} Selected`;
+            
+            // Send language selection to server
+            fetch('/select_language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                console.log(`${language.toUpperCase()} model selected`);
+            })
+            .catch(error => {
+                console.error('Error selecting language:', error);
+                alert('Error selecting language. Please try again.');
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            selectLanguage('asl');  // Set default language
+        });
+        
+        document.getElementById('toggleAudio').addEventListener('click', async () => {
+            if (!selectedLanguage) {
+                alert('Please select a sign language first');
+                return;
+            }
+            
+            if (!isStreaming) {
+                startLiveTranslation();
+            } else {
+                stopLiveTranslation();
+            }
+        });
+        
+        async function startLiveTranslation() {
+            if (!selectedLanguage) {
+                alert('Please select a sign language first');
+                return;
+            }
+            
+            // Reset any existing signs first
+            resetSigns();
+            
+            try {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                eventSource = new EventSource('/start_stream');
+                eventSource.onmessage = async (event) => {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.error) {
+                        alert(data.error);
+                        stopLiveTranslation();
+                        return;
+                    }
+                    
+                    if (data.text) {
+                        pendingText = data.text;
+                        processRecognizedText();
+                    } else if (data.partial) {
+                        document.getElementById('textInput').value = data.partial + '...';
+                    }
+                };
+                
+                isStreaming = true;
+                updateStatus(true);
+                document.getElementById('toggleAudio').innerHTML = '<i class="bi bi-mic-mute-fill"></i> Stop Live Translation';
+                document.getElementById('toggleAudio').classList.replace('btn-success', 'btn-danger');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Could not access microphone');
+            }
+        }
+        
+        async function processRecognizedText() {
+            if (!pendingText) return;
+            
+            const text = pendingText;
+            pendingText = '';
+            document.getElementById('textInput').value = text;
+            
+            try {
+                const response = await fetch('/translate_text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text })
+                });
+                
+                const data = await response.json();
+                if (data.video_paths) {
+                    // Cancel any currently playing video
+                    if (currentVideoPromise) {
+                        currentVideoPromise.cancel = true;
+                    }
+                    await playSignSequence(data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        async function stopLiveTranslation() {
+            if (eventSource) {
+                eventSource.close();
+                await fetch('/stop_stream', { method: 'POST' });
+            }
+            
+            isStreaming = false;
+            updateStatus(false);
+            document.getElementById('toggleAudio').textContent = 'Start Live Translation';
+            document.getElementById('toggleAudio').classList.replace('btn-danger', 'btn-success');
+        }
+        
+        function updateStatus(active) {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            if (active) {
+                indicator.classList.replace('status-inactive', 'status-active');
+                statusText.textContent = `${selectedLanguage.toUpperCase()} - Microphone Active`;
+            } else {
+                indicator.classList.replace('status-active', 'status-inactive');
+                statusText.textContent = `${selectedLanguage.toUpperCase()} - Microphone Inactive`;
+            }
+        }
+        
+        async function translateText() {
+            if (!selectedLanguage) {
+                alert('Please select a sign language first');
+                return;
+            }
+            
+            const text = document.getElementById('textInput').value;
+            if (!text) {
+                alert('Please enter text to translate');
+                return;
+            }
+            
+            // Reset the reset flag when starting new translation
+            isReset = false;
+            
+            // Reset signs but don't clear input
+            const video = document.getElementById('signVideo');
+            video.pause();
+            video.currentTime = 0;
+            video.style.display = 'none';
+            
+            const image = document.getElementById('signImage');
+            image.style.display = 'none';
+            
+            try {
+                const response = await fetch('/translate_text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        text,
+                        language: selectedLanguage
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                if (data.video_paths && !isReset) {
+                    await playSignSequence(data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error translating text. Please try again.');
+            }
+        }
+        
+        function setPlaybackSpeed(speed) {
+            currentPlaybackSpeed = speed;
+            
+            // Update UI
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update current video if playing
+            const video = document.getElementById('signVideo');
+            if (!video.paused) {
+                video.playbackRate = speed;
+            }
+        }
+        
+        async function playSignSequence(data) {
+            const video = document.getElementById('signVideo');
+            const image = document.getElementById('signImage');
+            
+            // Reset the reset flag when starting new sequence
+            isReset = false;
+            
+            video.pause();
+            video.currentTime = 0;
+            video.defaultPlaybackRate = currentPlaybackSpeed;
+            
+            for (const path of data.video_paths) {
+                // Check if reset was clicked
+                if (isReset) {
+                    console.log('Playback stopped by reset');
+                    return;
+                }
+                
+                if (path.endsWith('.mp4')) {
+                    video.style.display = 'block';
+                    image.style.display = 'none';
+                    video.src = `/media/${path.split('/').pop()}`;
+                    video.playbackRate = currentPlaybackSpeed;
+                    
+                    try {
+                        await new Promise((resolve, reject) => {
+                            video.onended = resolve;
+                            video.onerror = reject;
+                            // Also check for reset during video playback
+                            const checkReset = setInterval(() => {
+                                if (isReset) {
+                                    clearInterval(checkReset);
+                                    video.pause();
+                                    reject('Reset triggered');
+                                }
+                            }, 100);
+                            video.play().catch(reject);
+                        });
+                    } catch (error) {
+                        if (error === 'Reset triggered' || isReset) {
+                            return;
+                        }
+                        console.error('Video playback error:', error);
+                    }
+                } else {
+                    video.style.display = 'none';
+                    image.style.display = 'block';
+                    image.src = `/media/${path.split('/').pop()}`;
+                    try {
+                        await new Promise((resolve, reject) => {
+                            const timeout = setTimeout(resolve, 400/currentPlaybackSpeed);
+                            // Check for reset during image display
+                            const checkReset = setInterval(() => {
+                                if (isReset) {
+                                    clearInterval(checkReset);
+                                    clearTimeout(timeout);
+                                    reject('Reset triggered');
+                                }
+                            }, 50);
+                        });
+                    } catch (error) {
+                        if (error === 'Reset triggered' || isReset) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        function resetSigns() {
+            // Set reset flag
+            isReset = true;
+            
+            // Stop and hide video
+            const video = document.getElementById('signVideo');
+            video.pause();
+            video.currentTime = 0;
+            video.style.display = 'none';
+            
+            // Hide image
+            const image = document.getElementById('signImage');
+            image.style.display = 'none';
+            
+            // Reset live translation if active
+            if (isStreaming) {
+                stopLiveTranslation();
+            }
+            
+            // Clear pending text
+            pendingText = '';
+            
+            // Update status
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = `${selectedLanguage.toUpperCase()} Selected`;
+        }
+
+        // Update the existing submitFeedback function
+        function submitFeedback() {
+            const originalText = document.getElementById('textInput').value;
+            const correctionText = document.getElementById('correctionInput').value;
+            
+            if (!originalText || !correctionText) {
+                alert('Please enter both original text and correction');
+                return;
+            }
+            
+            fetch('/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    original: originalText,
+                    correction: correctionText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    alert('Thank you for your feedback!');
+                    document.getElementById('correctionInput').value = '';
+                } else {
+                    throw new Error(data.error || 'Failed to submit feedback');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting feedback: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html> 
