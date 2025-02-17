@@ -1,0 +1,37 @@
+[
+  {
+    "timestamp": "2025-02-17T06:44:14.572017",
+    "original": "like birthday parties and",
+    "correction": "may be more better",
+    "context": {
+      "subject": null,
+      "tense": null,
+      "mood": null,
+      "topic": null,
+      "emotions": [],
+      "questions": false,
+      "analysis_only": true,
+      "analysis": {
+        "tokens": [
+          "like",
+          "birthday",
+          "parties",
+          "and"
+        ],
+        "pos_tags": [
+          "ADP",
+          "NOUN",
+          "NOUN",
+          "CCONJ"
+        ],
+        "dependencies": [
+          "ROOT",
+          "compound",
+          "pobj",
+          "cc"
+        ]
+      }
+    },
+    "processed": false
+  }
+]

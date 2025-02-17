@@ -1,0 +1,6 @@
+
+--- Feedback Entry 2025-02-17T06:44:14.572017 ---
+Original: like birthday parties and
+Correction: may be more better
+Context: {'subject': None, 'tense': None, 'mood': None, 'topic': None, 'emotions': [], 'questions': False, 'analysis_only': True, 'analysis': {'tokens': ['like', 'birthday', 'parties', 'and'], 'pos_tags': ['ADP', 'NOUN', 'NOUN', 'CCONJ'], 'dependencies': ['ROOT', 'compound', 'pobj', 'cc']}}
+--------------------------------------------------
