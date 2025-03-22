@@ -1,0 +1,24 @@
+{
+    "feedback": [
+        {
+            "timestamp": "YYYY-MM-DD HH:MM:SS",
+            "original": "original text",
+            "correction": "corrected text"
+        },
+        {
+            "timestamp": "2025-02-18 22:40:13",
+            "original": "erfefef",
+            "correction": "feefeff"
+        },
+        {
+            "timestamp": "2025-02-18 22:40:39",
+            "original": "eeffe",
+            "correction": "nerf"
+        },
+        {
+            "timestamp": "2025-02-18 22:41:06",
+            "original": "w",
+            "correction": "wwww"
+        }
+    ]
+}
