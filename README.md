@@ -1,4 +1,43 @@
-2. Install required Python packages:
+# Sign Language Translator
+
+A comprehensive web application that translates voice and text into sign language, supporting multiple languages including American Sign Language (ASL), Indian Sign Language (ISL), and regional Indian languages.
+
+## Features
+
+### Core Functionality
+- Voice-to-Sign Language Translation
+- Text-to-Sign Language Translation
+- Real-time Translation Support
+- Sentiment Analysis of Speech/Text
+- Adjustable Playback Speed
+- Multi-language Support
+
+### Supported Languages
+- American Sign Language (ASL)
+- Indian Sign Language (ISL)
+- Hindi Sign Language
+- Telugu Sign Language
+- Gujarati Sign Language
+
+### Additional Features
+- User-contributed Sign Upload System
+- Comprehensive Learning Resources
+- User Feedback System
+- Sentiment Analysis Display
+- Interactive UI with Live Status Updates
+
+## Technology Stack
+
+- **Backend**: Python, Flask
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Speech Recognition**: Vosk Models
+- **Sentiment Analysis**: TextBlob
+- **Media Processing**: Video.js
+
+## Installation
+
+1. Clone the repository:
+2. 2. Install required Python packages:
 ```bash
 pip install -r requirements.txt
 ```
